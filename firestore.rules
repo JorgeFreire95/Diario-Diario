@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para la colección, "entries" (tus recuerdos)
+    match /entries/{entryId} {
+      
+      // 1. PERMITIR CREAR: Solo si estás autenticado y el ID de usuario del documento coincide con tu ID real.
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      
+      // 2. PERMITIR LEER, MODIFICAR Y BORRAR: Solo si el documento ya pertenece a tu usuario.
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+  }
+}
